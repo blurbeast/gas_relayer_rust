@@ -1,0 +1,37 @@
+use sqlx::{Pool, Postgres};
+use dotenvy::dotenv;
+use sqlx::migrate::Migrator;
+use sqlx::postgres::PgPoolOptions;
+
+use config;
+
+static MIGRANT: Migrator = sqlx::migrate!("./migrations");
+
+#[derive(Clone, Debug,)]
+pub struct DbState {
+    pub pool: Pool<Postgres>,
+}
+
+impl DbState {
+    pub async fn default() -> anyhow::Result<Self> {
+        dotenv().ok();
+        let db_url = config::config::load_env_var("DATABASE_URL"); // loads the database url from the environment variable
+
+        let connection_pool =
+            PgPoolOptions::new()
+                .max_connections(5)
+                .connect(&db_url)
+                .await?;
+
+        MIGRANT.run(&connection_pool).await?;
+
+        Ok(Self {
+            pool: connection_pool,
+        })
+    }
+
+    pub async fn ping_db(pool: &Pool<Postgres>) -> anyhow::Result<()> {
+        sqlx::query("SELECT 1").execute(pool).await?;
+        Ok(())
+    }
+}
