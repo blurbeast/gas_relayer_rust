@@ -39,7 +39,7 @@ impl Configuration {
 
 }
 pub type AppConfig = Arc<Configuration>;
-pub fn load_env_var(name: &str) -> String {
+pub(crate) fn load_env_var(name: &str) -> String {
     std::env::var(name)
         .map_err(|e| format!("{name}: {e}"))
         .expect("Missing environment variable")
