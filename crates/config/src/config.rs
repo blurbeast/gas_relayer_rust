@@ -25,7 +25,6 @@ impl Configuration {
         let database_url = load_env_var("DATABASE_URL").try_into().expect("DATABASE_URL is not set");
         let max_db_connection: u8 = load_env_var("MAX_DB_CONNECTION").parse::<u8>().expect("MAX_DB_CONNECTION is not a valid number");
 
-
         let listening_addr: SocketAddr = SocketAddr::from((Ipv6Addr::UNSPECIFIED, port));
 
         Self{

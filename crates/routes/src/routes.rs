@@ -1,13 +1,18 @@
 use std::sync::Arc;
 use axum::Router;
+use axum::routing::get;
 use tokio::net::TcpListener;
 use tokio::signal;
 use config::config::Configuration;
 use db::db::DbState;
+use crate::db_health_handler::db_health_handler;
 use crate::states::AppState;
 
 pub fn api_router(app_state: AppState) -> Router {
-    Router::new().with_state(app_state)
+    Router::new()
+        .route("/db-health", get(db_health_handler))
+        // .merge("")
+        .with_state(app_state)
 }
 
 pub async fn start_app(config: Arc<Configuration>, db: DbState) -> anyhow::Result<()> {
