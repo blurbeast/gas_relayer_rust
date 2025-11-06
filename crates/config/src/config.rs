@@ -1,13 +1,12 @@
+use serde::Deserialize;
 use std::net::{Ipv6Addr, SocketAddr};
 use std::sync::Arc;
-use serde::Deserialize;
 
-#[derive(Deserialize, Clone, Debug,)]
+#[derive(Deserialize, Clone, Debug)]
 pub enum Environment {
     Local,
-    Production
+    Production,
 }
-
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Configuration {
@@ -15,28 +14,35 @@ pub struct Configuration {
     pub database_url: String,
     pub app_port: u16,
     pub max_db_connection: u8,
-    pub listening_addr: SocketAddr
+    pub listening_addr: SocketAddr,
 }
 
 impl Configuration {
     pub fn load() -> Self {
-        let environment = load_env_var("APP_ENVIRONMENT").try_into().expect("APP_ENVIRONMENT is not a valid environment");
-        let port: u16 = load_env_var("APP_PORT").parse::<u16>().expect("APP_PORT is not a valid port");
-        let database_url = load_env_var("DATABASE_URL").try_into().expect("DATABASE_URL is not set");
-        let max_db_connection: u8 = load_env_var("MAX_DB_CONNECTION").parse::<u8>().expect("MAX_DB_CONNECTION is not a valid number");
+        let environment = load_env_var("APP_ENVIRONMENT")
+            .try_into()
+            .expect("APP_ENVIRONMENT is not a valid environment");
+        let port: u16 = load_env_var("APP_PORT")
+            .parse::<u16>()
+            .expect("APP_PORT is not a valid port");
+        let database_url = load_env_var("DATABASE_URL")
+            .try_into()
+            .expect("DATABASE_URL is not set");
+        let max_db_connection: u8 = load_env_var("MAX_DB_CONNECTION")
+            .parse::<u8>()
+            .expect("MAX_DB_CONNECTION is not a valid number");
 
         let listening_addr: SocketAddr = SocketAddr::from((Ipv6Addr::UNSPECIFIED, port));
 
-        Self{
+        Self {
             environment,
             database_url,
             app_port: port,
             max_db_connection,
-            listening_addr
+            listening_addr,
         }
     }
 }
-
 
 impl Environment {
     pub fn environment_as_string(&self) -> &'static str {

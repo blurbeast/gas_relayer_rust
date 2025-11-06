@@ -1,12 +1,12 @@
-use std::sync::Arc;
-use axum::Router;
-use axum::routing::get;
-use tokio::net::TcpListener;
-use tokio::signal;
-use config::config::Configuration;
-use db::db::DbState;
 use crate::db_health_handler::db_health_handler;
 use crate::states::AppState;
+use axum::Router;
+use axum::routing::get;
+use config::config::Configuration;
+use db::db::DbState;
+use std::sync::Arc;
+use tokio::net::TcpListener;
+use tokio::signal;
 
 pub fn api_router(app_state: AppState) -> Router {
     Router::new()
